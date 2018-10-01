@@ -1,0 +1,12 @@
+---
+apiVersion: shop.example.com/v1beta1
+kind: ExampleResource
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: exampleresource-sample
+spec:
+  # Add fields here
+  specfield1: foo
+  specfield2: bar
+

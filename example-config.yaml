@@ -1,0 +1,8 @@
+---
+boot:
+  - command: kubectl apply -f templates/example-crd.yaml
+watch:
+  - apiVersion: shop.example.com/v1beta1
+    kind: ExampleResource
+    command: /app/bin/wrapper
+    concurrency: 5

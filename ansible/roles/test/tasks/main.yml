@@ -1,0 +1,43 @@
+---
+
+# test create/update
+- name: set resource
+  set_fact:
+    shop_resource:
+      resources:
+        - api_version: "{{ obj_api_version }}"
+          kind: "{{ obj_kind }}"
+          name: "{{ obj_name }}"
+          namespace: "{{ obj_namespace }}"
+
+- include: upsert.yml
+  when: "'resources' in shop_resource"
+  register: result
+
+- name: debug upsert test result
+  debug:
+    var: result
+
+- assert:
+    that:
+      - "'a resource should get created or updated now' in result.msg"
+
+# test deletion
+- name: set resource
+  set_fact:
+    shop_resource:
+      changed: false
+      failed: false
+      items: []
+
+- include: delete.yml
+  when: "'resources' not in shop_resource"
+  register: result
+
+- name: debug delete test result
+  debug:
+    var: result
+
+- assert:
+    that:
+      - "'a resource should get deleted now' in result.msg"
