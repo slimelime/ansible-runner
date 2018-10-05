@@ -1,0 +1,13 @@
+---
+
+- name: delete an example resource
+  debug:
+    msg: "a resource should get deleted now"
+
+- assert:
+    that:
+      - "obj_api_version == 'v1beta1'"
+      - "obj_kind == 'exampleresource'"
+      - "obj_namespace == 'default'"
+      - "obj_name == 'exampleresource-sample'"
+    msg: "object assertion failed"

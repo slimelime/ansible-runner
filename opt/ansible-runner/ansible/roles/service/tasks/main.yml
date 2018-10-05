@@ -1,0 +1,7 @@
+---
+
+- include: /app/upsert.yml
+  when: "k8s_resource is defined"
+
+- include: /app/delete.yml
+  when: "k8s_resource is not defined"

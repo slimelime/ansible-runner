@@ -1,0 +1,8 @@
+FROM node:6-alpine
+
+RUN apk update && apk add sqlite bash curl
+RUN npm install -g easymock
+
+EXPOSE 3000
+
+CMD [ "easymock","-d", "/data" ]

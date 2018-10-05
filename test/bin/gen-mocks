@@ -1,0 +1,54 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+# gen-mocks
+# This one queries an active cluster using kubectl, then copies the cache
+# results to the mock directory for use by node-easymock.
+#------------------------------------------------------------------------------
+set -eo pipefail
+
+die() { printf '%s\n' "$*" >&2; exit 1; }
+
+kontext=$(kubectl config current-context)
+api_server_prefix="api.external"
+api_server_hostname="${api_server_prefix}.${kontext}"
+api_server_hostname="${kontext}"
+echo "using k8s context $kontext"
+kcachedir=$(echo "$HOME"/.kube/cache/discovery/"$api_server_hostname"|tr '-' '_')
+mockdatadir="./mocks"
+
+which kubectl > /dev/null || die "missing kubectl binary"
+
+if [[ -d "$kcachedir" ]]; then
+  echo "removing current cache directory for $api_server_hostname"
+  rm -rf $kcachedir
+fi
+
+# let's query the cluster and populate the cache with the basics
+kubectl get pod > /dev/null
+
+find $kcachedir -name serverresources.json|while read this
+do
+  for dir in upsert delete
+  do
+    stem=${this#${kcachedir}}
+    jfile="/serverresources.json"
+    #/authentication.k8s.io/v1/serverresources.json
+    obj=${stem%${jfile}}
+    destdir="${mockdatadir}/${dir}/apis${obj%/*}"
+    destfile="${mockdatadir}/${dir}/apis${obj}_get.json"
+    mkdir -p $destdir
+    echo creating $destfile
+    cp $this $destfile
+  done
+done
+
+# copy over the manually created mock responses
+# these contain info about the exampleresource crds and objects used by the tests
+for dir in upsert delete
+do
+  rsync -av ${mockdatadir}/manual/ ${mockdatadir}/${dir}/
+done
+
+# remove exampleresource responses from delete mock directory
+# this is the only difference
+rm -f ${mockdatadir}/delete/apis/shop.example.com/v1beta1/namespaces/default/exampleresources/*

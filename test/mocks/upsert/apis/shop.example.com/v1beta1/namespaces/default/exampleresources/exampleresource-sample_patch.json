@@ -1,0 +1,15 @@
+{
+    "metadata": {
+        "labels": {
+            "controller-tools.k8s.io": "1.0"
+        }
+    },
+    "spec": {
+        "specfield1": "foo",
+        "specfield2": "bar"
+    },
+    "status": {
+        "statusfield1": "foo",
+        "statusfield2": "bar"
+    }
+}

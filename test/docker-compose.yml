@@ -1,0 +1,47 @@
+---
+version: '2.3'
+
+x-base: &base
+  build:
+    context: .
+  working_dir: /app
+  networks:
+    - kube
+
+x-mock: &mock
+  build:
+    context: .
+    dockerfile: Dockerfile.easymock
+  working_dir: /app
+  volumes:
+    - "./mocks/${TEST_ACTION}:/data"
+  networks:
+    - kube
+
+services:
+
+  apiserver:
+    <<: *mock
+    ports:
+     - 3000:3000
+
+  mosh:
+    <<: *mock
+    ports:
+     - 3000:3000
+    command: [bash]
+
+  test:
+    <<: *base
+    environment:
+      KUBECONFIG: /app/kubeconfig
+    depends_on:
+      - apiserver
+    volumes:
+      - "./kubeconfig:/app/kubeconfig"
+      - "./bin/test:/app/bin/test"
+    entrypoint: [/app/bin/test]
+
+networks:
+  kube: {}
+

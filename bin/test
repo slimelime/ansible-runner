@@ -2,11 +2,18 @@
 #------------------------------------------------------------------------------
 set -eo pipefail
 
-SHOP_OBJECT_NAME="test-object"
-SHOP_OBJECT_NAMESPACE="default"
-SHOP_API_VERSION="v1beta1"
-SHOP_KIND="test"
+die() { printf '%s\n' "$*" >&2; exit 1; }
 
-export SHOP_OBJECT_NAME SHOP_OBJECT_NAMESPACE SHOP_KIND SHOP_API_VERSION
+if [ "$#" -lt 1 ]; then
+  die "missing argument ( upsert|delete ) missing"
+fi
 
-/app/bin/wrapper
+action="$1"
+[[ "$action" =~ ^(upsert|delete)$ ]] || die "argument must be one of upsert or delete"
+
+export TEST_ACTION=$action
+docker build -t myobplatform/ansible-runner:latest .
+cd test
+docker-compose build
+docker-compose up test
+docker-compose down

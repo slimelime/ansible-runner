@@ -1,0 +1,29 @@
+---
+- hosts: local
+  connection: local
+
+  pre_tasks:
+    - name: set resource variables
+      set_fact:
+        obj_kind: "{{ lookup('env','SHOP_KIND') }}"
+        obj_name: "{{ lookup('env','SHOP_OBJECT_NAME') }}"
+        obj_namespace: "{{ lookup('env','SHOP_OBJECT_NAMESPACE') }}"
+        obj_api_version: "{{ lookup('env','SHOP_API_VERSION') }}"
+
+    - name: query resource
+      k8s_facts:
+        api_version: "{{ obj_api_version }}"
+        kind: "{{ obj_kind }}"
+        name: "{{ obj_name }}"
+        namespace: "{{ obj_namespace }}"
+      register: shop_resource
+
+    - name: register resource to update
+      set_fact:
+        k8s_resource: "{{ shop_resource.resources.0 }}"
+      when: "'resources' in shop_resource and shop_resource.resources|length == 1"
+
+  roles:
+    - debug
+    - service
+

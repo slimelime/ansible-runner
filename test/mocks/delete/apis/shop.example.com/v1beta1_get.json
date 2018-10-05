@@ -1,0 +1,1 @@
+{"kind":"APIResourceList","apiVersion":"v1","groupVersion":"shop.example.com/v1beta1","resources":[{"name":"exampleresources","singularName":"exampleresource","namespaced":true,"kind":"ExampleResource","verbs":["delete","deletecollection","get","list","patch","create","update","watch"]}]}
