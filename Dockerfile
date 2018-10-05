@@ -1,14 +1,21 @@
 FROM myobplatform/shell-operator:0.1.0 as shop
 
-FROM python:3.6-alpine
-RUN apk add --no-cache -U curl bash git gcc musl-dev libffi-dev openssl-dev make
+FROM python:3.6-alpine as py-builder
+RUN apk add --no-cache -U git gcc musl-dev libffi-dev openssl-dev make
+RUN mkdir /install
+WORKDIR /install
+COPY opt/ansible-runner/requirements.txt /opt/ansible-runner/requirements.txt
+RUN export PYTHONPATH="/install/lib/python3.6/site-packages" && \
+    pip install --install-option="--prefix=/install" -r /opt/ansible-runner/requirements.txt
+
+FROM alpine as base
+RUN apk add --no-cache -U curl bash
 ENV KUBE_VERSION="v1.11.3"
 RUN curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl -o /usr/bin/kubectl \
  && chmod +x /usr/bin/kubectl
-# Add application last so it would prevent from running excessive build
-COPY opt/ansible-runner/requirements.txt /opt/ansible-runner/requirements.txt
-RUN pip install -r /opt/ansible-runner/requirements.txt
+COPY --from=py-builder /install /usr/local
 COPY --from=shop /shell-operator /shell-operator
+# Add application last so it would prevent from running excessive build
 COPY opt /opt
 
 ENTRYPOINT ["/shell-operator"]
