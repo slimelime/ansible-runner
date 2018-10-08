@@ -12,8 +12,8 @@ action="$1"
 [[ "$action" =~ ^(upsert|delete)$ ]] || die "argument must be one of upsert or delete"
 
 export TEST_ACTION=$action
-docker build -t myobplatform/ansible-runner:latest .
+docker build -t ansible-runner:latest .
 cd test
 docker-compose build
-docker-compose up test
+docker-compose run test
 docker-compose down
