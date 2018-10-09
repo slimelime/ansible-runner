@@ -1,4 +1,4 @@
-FROM myobplatform/shell-operator:0.1.0 as shop
+FROM myobplatform/shell-operator:0.2.0 as shop
 
 FROM python:3.7-alpine3.8 as py-builder
 RUN apk add --no-cache -U git gcc musl-dev libffi-dev openssl-dev make
