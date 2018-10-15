@@ -21,9 +21,13 @@
     - name: register resource to update
       set_fact:
         k8s_resource: "{{ shop_resource.resources.0 }}"
-      when: "'resources' in shop_resource and shop_resource.resources|length == 1"
+      when: "'resources' in shop_resource and shop_resource.resources | length == 1"
+
+    - name: register delete timestamp
+      set_fact:
+        delete_timestamp: "{{ k8s_resource.metadata.deletionTimestamp }}"
+      when: "k8s_resource is defined and k8s_resource.metadata.deletionTimestamp is defined"
 
   roles:
     - debug
     - service
-

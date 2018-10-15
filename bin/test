@@ -5,11 +5,10 @@ set -eo pipefail
 die() { printf '%s\n' "$*" >&2; exit 1; }
 
 if [ "$#" -lt 1 ]; then
-  die "missing argument ( upsert|delete ) missing"
+  die "missing argument for mock folder name missing"
 fi
 
 action="$1"
-[[ "$action" =~ ^(upsert|delete)$ ]] || die "argument must be one of upsert or delete"
 
 export TEST_ACTION=$action
 docker build -t ansible-runner:latest .
