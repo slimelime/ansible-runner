@@ -1,4 +1,4 @@
-FROM myobplatform/shell-operator:0.3.1 as shop
+FROM myobplatform/shell-operator:0.3.2 as shop
 
 FROM python:3.7-alpine3.8 as py-builder
 RUN apk add --no-cache -U git gcc musl-dev libffi-dev openssl-dev make
@@ -12,7 +12,7 @@ FROM python:3.7-alpine3.8 as base
 RUN apk add --no-cache -U curl bash
 ENV KUBE_VERSION="v1.11.3"
 RUN curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl -o /usr/bin/kubectl \
- && chmod +x /usr/bin/kubectl
+  && chmod +x /usr/bin/kubectl
 COPY --from=py-builder /install /usr/local
 COPY --from=shop /shell-operator /shell-operator
 # Add application last so it would prevent from running excessive build

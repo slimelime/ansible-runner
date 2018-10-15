@@ -3,7 +3,7 @@ version: '2.3'
 
 x-base: &base
   build:
-    context: .
+    context: ../
   working_dir: /app
   networks:
     - kube
@@ -23,25 +23,26 @@ services:
   apiserver:
     <<: *mock
     ports:
-     - 3000:3000
+      - 3000:3000
 
   mosh:
     <<: *mock
     ports:
-     - 3000:3000
+      - 3000:3000
     command: [bash]
 
   test:
     <<: *base
     environment:
-      KUBECONFIG: /app/kubeconfig
+      KUBECONFIG: /root/.config/kubeconfig
     depends_on:
       - apiserver
     volumes:
-      - "./kubeconfig:/app/kubeconfig"
-      - "./bin/test:/app/bin/test"
-    entrypoint: [/app/bin/test]
+      - "./kubeconfig:/root/.config/kubeconfig"
+      - "./bin/test:/test/bin/test"
+      - "../opt:/opt"
+      - "./app:/app"
+    entrypoint: [/test/bin/test]
 
 networks:
   kube: {}
-
