@@ -10,6 +10,7 @@ services:
 script:
   - ./bin/test upsert
   - ./bin/test delete
+  - ./bin/test finalizer-delete
 
 after_success:
   - if [ -n "$TRAVIS_TAG" ]; then

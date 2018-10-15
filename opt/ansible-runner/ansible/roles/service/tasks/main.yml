@@ -1,7 +1,6 @@
 ---
-
 - include: /app/upsert.yml
-  when: "k8s_resource is defined"
+  when: "k8s_resource is defined and delete_timestamp is not defined"
 
 - include: /app/delete.yml
-  when: "k8s_resource is not defined"
+  when: "k8s_resource is not defined or delete_timestamp is defined"
