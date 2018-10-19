@@ -1,6 +1,12 @@
 ---
-- include: /app/upsert.yml
+- name: "Validating that I have minimum required params"
+  assert:
+    that:
+    - "{{ 'tasks_dir' }} != ''"
+    msg: "Validating passed"
+
+- include: "{{ tasks_dir }}/upsert.yml"
   when: "k8s_resource is defined and delete_timestamp is not defined"
 
-- include: /app/delete.yml
+- include: "{{ tasks_dir }}/delete.yml"
   when: "k8s_resource is not defined or delete_timestamp is defined"

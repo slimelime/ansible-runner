@@ -6,11 +6,14 @@ die() { printf '%s\n' "$*" >&2; exit 1; }
 
 pid=$$
 scriptdir=$(dirname $0)
+tasksdir="${1:-/app}"
 
 echo "+++ begin wrapper pid: $pid"
-[[ -f "/app/upsert.yml" ]] || die "play upsert.yml does not exist"
-[[ -f "/app/delete.yml" ]] || die "play delete.yml does not exist"
+
+[[ -d "${tasksdir}" ]] || die "directory '${tasksdir}' does not exist"
+[[ -f "${tasksdir}/upsert.yml" ]] || die "play upsert.yml does not exist"
+[[ -f "${tasksdir}/delete.yml" ]] || die "play delete.yml does not exist"
 cd ${scriptdir}/../ansible
 [[ -f "runner.yml" ]] || die "playbook runner.yml does not exist"
-ansible-playbook -v runner.yml
+ansible-playbook -e "tasks_dir=${tasksdir}" -v runner.yml
 echo "+++ end wrapper pid: $pid"
