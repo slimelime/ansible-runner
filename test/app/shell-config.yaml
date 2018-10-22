@@ -1,6 +1,6 @@
 ---
 boot:
-  - command: kubectl apply -f /app/config/crd.yaml
+  - command: kubectl apply -f /app/crd.yaml
 watch:
   - apiVersion: shop.example.com/v1beta1
     kind: ExampleResource

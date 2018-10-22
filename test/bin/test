@@ -9,4 +9,9 @@ SHOP_KIND="exampleresource"
 
 export SHOP_OBJECT_NAME SHOP_OBJECT_NAMESPACE SHOP_KIND SHOP_API_VERSION
 
+# Test using default "/app" tasks directory
+/opt/ansible-runner/bin/wrapper
+
+# Test using different tasks directory
+export TASKS_DIR="/app/another-tasks-dir"
 /opt/ansible-runner/bin/wrapper

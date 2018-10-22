@@ -1,0 +1,26 @@
+---
+
+- name: upsert an example resource
+  debug:
+    msg: "a resource should get created or updated now"
+
+- assert:
+    that:
+      - "obj_api_version == 'v1beta1'"
+      - "obj_kind == 'exampleresource'"
+      - "obj_namespace == 'default'"
+      - "obj_name == 'exampleresource-sample'"
+    msg: "object assertion failed"
+
+- name: update the example resource
+  k8s:
+    state: present
+    definition:
+      apiVersion: "{{ obj_api_version }}"
+      kind: "{{ obj_kind }}"
+      metadata:
+        name: "{{ obj_name }}"
+        namespace: "{{ obj_namespace }}"
+      status:
+        statusfield1: "{{ k8s_resource.spec.specfield1 }}"
+        statusfield2: "{{ k8s_resource.spec.specfield2 }}"
