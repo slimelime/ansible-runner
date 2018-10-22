@@ -1,8 +1,14 @@
 ---
-- name: "Validating that I have minimum required params"
+- name: "Get tasks directory from environment variable"
+  set_fact:
+    tasks_dir: "{{ lookup('env','TASKS_DIR') | default('/app', true) }}"
+
+- name: "Validating task dir is valid"
   assert:
     that:
-    - "{{ 'tasks_dir' }} != ''"
+      - "'{{ tasks_dir }}' is directory"
+      - "'{{ tasks_dir }}/upsert.yml' is exists"
+      - "'{{ tasks_dir }}/delete.yml' is exists"
     msg: "Validating passed"
 
 - include: "{{ tasks_dir }}/upsert.yml"
